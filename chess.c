@@ -51,7 +51,7 @@ double SPECPOW      = 50 ;
 int textureMap[10];
 
 
-
+// Created by Jeffery Ely
 int Light_Model (double irgb[3],
                  double s[3],
                  double p[3],
@@ -160,7 +160,7 @@ int Light_Model (double irgb[3],
 
 
 
-
+// Created by Jeffery Ely
 int quadratic(double a, double b, double c, double result[2])
 // return number of solutions
 {
