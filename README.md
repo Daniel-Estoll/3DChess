@@ -1,6 +1,6 @@
 # 3DChess
 
-This is a playable 3d chess simulation created using ray tracing. All chess rules excluding En Passant are implemented.
+This is a playable 3d chess simulation created using ray tracing. All chess rules excluding En Passant and pawn promotion are implemented.
 
 
 ## Notes: 
