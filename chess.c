@@ -3287,7 +3287,6 @@ int checkQueenMoves(int piece, double position[3])
 // returns 0 if not valid, 1 if valid, 2 if capture, 3 if Queenside Castle, 4 if Kingside Castle
 int checkKingMoves(int piece, double position[3])
 {	
-	int q;
 	double positionDiff[2];
 	positionDiff[0] = position[0] - piece_location[piece][0];
 	positionDiff[1] = position[2] - piece_location[piece][2];
@@ -3318,9 +3317,7 @@ int checkKingMoves(int piece, double position[3])
 	}
 	else if (abs(positionDiff[0]) <= 4 && abs(positionDiff[1]) <= 4)
 	{
-		q = checkPath(piece_location[piece], position, isPieceWhite[piece]);
-		printf("%d\n", q);
-		return q;
+		return checkPath(piece_location[piece], position, isPieceWhite[piece]);
 	}
 	return 0;
 }
