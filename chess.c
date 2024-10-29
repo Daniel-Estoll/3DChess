@@ -3095,8 +3095,9 @@ int movePiece(int piece, double position[3])
 // returns 0 if invalid, 1 if valid, 2 if capture
 int checkPath(double start[3], double end[3], int isWhite)
 {
-	double temp[3], diff[2];
+	double temp[3], diff[2], boundary;
 	int squares, i, r;
+	if (end[0] < -14 || end[0] > 14 || end[2] < -14 || end[2] > 14) {return 0;}
 	diff[0] = end[0] - start[0];
 	diff[1] = end[2] - start[2];
 
@@ -3285,7 +3286,8 @@ int checkQueenMoves(int piece, double position[3])
 
 // returns 0 if not valid, 1 if valid, 2 if capture, 3 if Queenside Castle, 4 if Kingside Castle
 int checkKingMoves(int piece, double position[3])
-{
+{	
+	int q;
 	double positionDiff[2];
 	positionDiff[0] = position[0] - piece_location[piece][0];
 	positionDiff[1] = position[2] - piece_location[piece][2];
@@ -3316,7 +3318,9 @@ int checkKingMoves(int piece, double position[3])
 	}
 	else if (abs(positionDiff[0]) <= 4 && abs(positionDiff[1]) <= 4)
 	{
-		return checkPath(piece_location[piece], position, isPieceWhite[piece]);
+		q = checkPath(piece_location[piece], position, isPieceWhite[piece]);
+		printf("%d\n", q);
+		return q;
 	}
 	return 0;
 }
@@ -3390,22 +3394,27 @@ int squareInCheck(double position[3], int isWhite)
 int willKingBeInCheck(int pieceMoved, double position[3], int kingIsWhite)
 {
 	double oldPosition[3];
-	int result, kingID, temp, pieceTemp, i, t;
+	int result, kingID, temp, pieceTemp, i, t, n, s;
+	printf("%d\n", kingIsWhite);
 	if (kingIsWhite)
 	{
 		kingID = 12;
+		s = 0;
+		n = 16;
 	}
 	else
 	{
 		kingID = 28;
+		s = 16;
+		n = 32;
 	}
 
 	oldPosition[0] = piece_location[pieceMoved][0];
 	oldPosition[1] = piece_location[pieceMoved][1];
 	oldPosition[2] = piece_location[pieceMoved][2];
 	t = 0;
-	// if (moveIsValid(pieceMoved, position) == 0) {return 0;}
-	for (i = 0; i < num_pieces; i++)
+	if (moveIsValid(pieceMoved, position) == 0) {return 0;}
+	for (i = s; i < n; i++)
 	{
 		if (position[0] == piece_location[i][0] && position[2] == piece_location[i][2])
 		{
@@ -3451,7 +3460,7 @@ int isCheckmate(int isWhite)
 			position[1] = 0;
 			position[2] = z * 4 + 2;
 			for (i = istart; i < istop; i++)
-			{
+			{	
 				if (moveIsValid(i, position) && !willKingBeInCheck(i, position, isWhite))
 				{
 					return 0;
@@ -3630,22 +3639,8 @@ int waitMove()
 			}
 		}
 
-		if (squareInCheck(piece_location[12], 1))
-		{
-			isInCheck[1] = 1;
-		}
-		else
-		{
-			isInCheck[1] = 0;
-		}
-		if (squareInCheck(piece_location[28], 0))
-		{
-			isInCheck[0] = 1;
-		}
-		else
-		{
-			isInCheck[0] = 0;
-		}
+		isInCheck[1] = squareInCheck(piece_location[12], 1);
+		isInCheck[0] = squareInCheck(piece_location[28], 0);
 
 		if (isInCheck[!isWhiteTurn])
 		{
@@ -3730,7 +3725,6 @@ void fill_board()
 	num_pieces++;
 	create_rook(14, 0, -14, 1);
 	num_pieces++;
-
 	// Black Pieces
 	create_pawn(-14, 0, 10, 0);
 	num_pieces++;
@@ -3764,7 +3758,8 @@ void fill_board()
 	num_pieces++;
 	create_rook(14, 0, 14, 0);
 	num_pieces++;
-
+	
+	
 	int i;
 
 	for (i = 0; i < num_pieces; i++)
@@ -3812,12 +3807,6 @@ int main()
 	// init_z_buffer();
 	G_init_graphics(window_width, window_height);
 
-	mapID[0] = init_xwd_map_from_file("GraniteJ.xwd");
-	if (mapID[0] == -1)
-	{
-		printf("Texture map file does not exist\n");
-		exit(0);
-	}
 	mapID[1] = init_xwd_map_from_file("WhiteMarbleJ.xwd");
 	if (mapID[1] == -1)
 	{
